@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Helper = require('./test_helper');
-const assert = require('assert')
+const assert = require('assert');
 const Users = Helper.Users;
 const Orders = Helper.Orders;
 const jsonify = require('../utility/jsonify');

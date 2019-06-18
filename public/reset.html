@@ -1,0 +1,31 @@
+<html>
+
+<head>
+    <title>
+        Reset Password
+    </title>
+</head>
+
+<body>
+    <form onsubmit="validate()" action="/api/reset" method="POST">
+        <input type="hidden" name="token" id="token">
+        <input type="password" name="new" id="new">
+        <input type="password" name="verify" id="verify">
+        <input onclick="" type="submit" value="Change your Password" />
+    </form>
+</body>
+<script>
+    function validate() {
+        var urlParams = new URLSearchParams(window.location.search);
+        let token = document.getElementById("token");
+        token.value = urlParams.get("token");
+        let a = document.getElementById("new");
+        let b = document.getElementById("verify");
+        if (a.value === b.value) {
+            return true;
+        }
+        return false;
+    }
+</script>
+
+</html>

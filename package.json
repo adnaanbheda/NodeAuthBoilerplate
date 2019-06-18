@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "set NODE_ENV=test & nodemon --exec mocha --recursive -R min --timeout 5000"
+    "test": "set NODE_ENV=test & nodemon --exec mocha --recursive -R min --timeout 7000"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +17,10 @@
     "mocha": "^6.1.4",
     "mongoose": "^5.5.13",
     "mongoose-deep-populate": "^3.1.1",
-    "nodemon": "^1.19.1"
+    "mongoose-unique-validator": "^2.0.3",
+    "nodemailer": "^6.2.1"
+  },
+  "devDependencies": {
+    "supertest": "^4.0.2"
   }
 }

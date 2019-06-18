@@ -1,10 +1,7 @@
 
 if (process.env.NODE_ENV != 'production') {
     const keys = require('./dev')
-    module.exports = {
-        mongoURI: keys.mongoURI,
-        secret: keys.secret
-    }
+    module.exports = keys;
 }
 else {
     module.exports = {

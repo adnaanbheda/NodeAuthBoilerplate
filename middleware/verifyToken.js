@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 const Users = mongoose.model('users');
 const jwt = require('jsonwebtoken');
-const app = require('../server');
 
 
 module.exports = (req, res, next) => {
+    const app = require('../server');
     // check header or url parameters or post parameters for token
     var token = req.body.token || req.query.token || req.headers['x-access-token'];
 
