@@ -7,6 +7,5 @@ module.exports = function (password) {
             resolve(hash);
         });
     });
-    console.log("Hashed :" + hashedPassword);
     return hashedPassword;
 }

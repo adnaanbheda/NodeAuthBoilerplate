@@ -3,7 +3,7 @@ module.exports = (success, data) => {
     if (type == "object") {
         return {
             success: success,
-            data
+            ...data
         }
     }
     else if (type == "string") {

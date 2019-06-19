@@ -35,8 +35,22 @@ async function Login(app, data) {
             });
     });
 }
+
+async function Register(app, data) {
+    return new Promise(resolve => {
+        request(app)
+            .post("/api/register")
+            .send(data)
+            .set("Accept", "application/json")
+            .expect(200)
+            .then((res) => {
+                return resolve(res);
+            });
+    })
+}
 module.exports = {
     Users,
     Orders,
-    Login
+    Login,
+    Register
 }

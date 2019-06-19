@@ -45,7 +45,7 @@ module.exports = {
         }, async function (err, user) {
             if (err) throw err;
             if (!user) {
-                res.status(401).json({ success: false, message: 'Authentication failed. User not found.' });
+                res.status(401).json(util.message(false, 'Authentication failed. User not found.'));
             } else if (user) {
                 // check if password matches
                 let success = false;
@@ -54,7 +54,7 @@ module.exports = {
                     success = await user.isValidPassword(req.body.password);
                 }
                 if (!success) {
-                    res.status(401).json({ success: false, message: 'Password Invalid.' })
+                    res.status(401).json(util.message(false, "Password Invalid."));
                 } else {
                     // if user is found and password is right
                     // create a token with only our given payload
@@ -63,21 +63,19 @@ module.exports = {
                         expiresIn: 60 * 60 * 24 // expires in 24 hours
                     });
                     if (user.verified == false) {
-                        res.send({
-                            success: false,
+                        res.json(util.message(false, {
                             message: "Please verify your account.",
                             token: token
-                        });
+                        }));
                         return;
                     }
                     // return the information including token as JSON
-                    res.json({
-                        success: true,
+                    res.json(util.message(true, {
                         message: 'Enjoy your token!',
                         token: token,
                         //Edit required
-                        user: user.toObject({})
-                    });
+                        user: user
+                    }));
                 }
             }
         });
@@ -86,7 +84,6 @@ module.exports = {
         const data = req.body;
         let user;
         try {
-
             const temp = await Users.findOne({
                 email: data.email
             })
@@ -99,21 +96,10 @@ module.exports = {
                 phone: data.phone
             });
         } catch (error) {
-            res.status(500).send({
-                success: false,
-                message: "Account with that email already exists."
-            });
+            res.status(500).send(util.message(true, "Account with that email already exists."));
         }
         if (user) {
-            console.log("User Created Successfully");
-            const transporter = nodemailer.createTransport(keys.transporter);
             const token = await util.encrypt();
-            const mailOptions = {
-                to: user.email,
-                subject: "Verify Account",
-                html: `Please click below to verify your account\n\n
-                    <a href="http://localhost:3000/api/verify?token=${token}">Click here</a>`,
-            }
             try {
                 //Important 
                 await Users.findByIdAndUpdate(user._id, {
@@ -121,17 +107,28 @@ module.exports = {
                         token: token
                     }
                 });
-                transporter.sendMail(mailOptions, (err, info) => {
-                    if (err) {
-                        console.log(err);
-                        res.sendStatus(500);
-                    } else {
-                        res.send({
-                            success: true,
-                            message: "Check your email to verify your account."
-                        });
+                if (process.env.NODE_ENV === 'production') {
+                    const transporter = nodemailer.createTransport(keys.transporter);
+                    const mailOptions = {
+                        to: user.email,
+                        subject: "Verify Account",
+                        html: `Please click below to verify your account\n\n
+                    <a href="http://localhost:3000/api/verify?token=${token}">Click here</a>`,
                     }
-                });
+                    transporter.sendMail(mailOptions, (err, info) => {
+                        if (err) {
+                            console.log(err);
+                            res.sendStatus(500);
+                        } else {
+                            res.send(true, "Check your email to verify your account.");
+                        }
+                    });
+                } else {
+                    res.json(util.message(true, {
+                        message: "Token provided.",
+                        token: token
+                    }));
+                }
             }
             catch (err) {
                 console.log(err);
@@ -141,7 +138,6 @@ module.exports = {
     },
     async ResetPasswordPage(req, res) {
         let token = req.query.token;
-        console.log(token);
         const user = await Users.findOne({
             token: token
         });
@@ -157,10 +153,7 @@ module.exports = {
         const token = req.body.token;
         const decrypted = await util.decipher(token);
         if (Date.now() - decrypted > (1000 * 60 * 60 * 24)) {
-            res.send({
-                success: false,
-                message: "Token expired"
-            });
+            res.json(util.message(false, "Token expired."));
             return;
         }
         const newp = req.body.new;
@@ -186,7 +179,6 @@ module.exports = {
     },
     async Verify(req, res) {
         const { token } = req.query;
-        console.log(token);
         try {
             const user = await Users.findOne({
                 token: token
@@ -198,23 +190,14 @@ module.exports = {
                         token: null
                     }
                 });
-                res.json({
-                    success: true,
-                    message: "Your Account is verified."
-                });
+                res.json(util.message(true, "Your Account is verified."));
             }
             else {
-                res.json({
-                    success: false,
-                    message: "User not found."
-                });
+                res.json(util.message(false, "User not found."));
             }
         }
         catch (error) {
-            res.json({
-                success: false,
-                message: error.toString()
-            });
+            res.json(util.message(false, error.toString()));
         }
     }
 }

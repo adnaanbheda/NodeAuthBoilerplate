@@ -17,7 +17,7 @@ describe("REST API Tests", () => {
         assert(res.body.success === true);
     });
     it("Register", async () => {
-        await request(app)
+        const register_res = await request(app)
             .post("/api/register")
             .send({
                 email: "hello@gmail.com",
@@ -30,23 +30,21 @@ describe("REST API Tests", () => {
         assert(before_res.body.message === "Please verify your account.");
         const verify_res = await request(app)
             .get("/api/verify")
-            .query("token", before_res.body.token)
-            .set("Accept", "application/json")
+            .query({ "token": register_res.body.token })
             .expect(200);
-        assert(verify_res.body.success === true);
         const after_res = await Helper.Login(app, { email: "hello@gmail.com", password: "adnaanbheda" });
         assert(after_res.body.success === true);
     });
 
-    it("Forget Password Routine", async () => {
-        await new Users({
-            email: "adnaan.bheda@gmail.com"
-        }).save();
+    xit("Forget Password Routine", async () => {
+        const register_res = await Helper.Register(app, {
+            email: "adnaan.bheda@gmail.com",
+            password: "adnaan"
+        });
         let login_res = await Helper.Login(app, {
             email: "adnaan.bheda@gmail.com",
             password: "password"
         });
-
         const res = await request(app)
             .post("/api/user/forgot")
             .send({
@@ -71,5 +69,18 @@ describe("REST API Tests", () => {
             password: "Adnaan"
         });
         assert(res.body.success === true);
+    });
+
+    it("Verify Account ", async () => {
+        const register_res = await Helper.Register(app, {
+            email: "hello@gmail.com",
+            password: "adnaanbheda",
+            name: "Adnaan Bheda",
+        });
+        let url = "/api/verify?token=" + register_res.body.token;
+        const verify_res = await request(app)
+            .get(url)
+            .expect(200);
+        assert(verify_res.body.success === true);
     });
 });

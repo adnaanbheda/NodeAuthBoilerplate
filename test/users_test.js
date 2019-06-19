@@ -1,9 +1,7 @@
-const mongoose = require('mongoose');
 const Helper = require('./test_helper');
 const assert = require('assert');
 const Users = Helper.Users;
 const Orders = Helper.Orders;
-const jsonify = require('../utility/jsonify');
 const populate = require('../utility/populateUtil');
 describe("User Test Initiated", () => {
     it("Create a user with an order", async () => {
@@ -33,7 +31,6 @@ describe("User Test Initiated", () => {
                 logistics: user
             }
         });
-        // console.log(user);
         const query = await Users.findOne({ email: "adnaan.bheda@gmail.com" })
             .populate(populate.people);
         assert(query.orderlist[0].people.client.email != undefined);
