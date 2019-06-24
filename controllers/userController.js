@@ -1,4 +1,3 @@
-
 const Users = require('../models/User')
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
@@ -9,9 +8,7 @@ module.exports = {
     async GetOrderList(req, res) {
         const id = req.decoded.id;
         const user = await Users.findById(id).populate("orderlist");
-        res.send(util.message(true,
-            user.orderlist
-        ));
+        res.send(util.message(true, user.orderlist));
     },
     async CreateOrder(req, res) {
         const id = req.decoded.id;
@@ -32,6 +29,8 @@ module.exports = {
     },
     async DeleteOrder(req, res) {
         const id = req.decoded.id;
+        const user = await Users.findById(id);
+        const
     },
     async ForgotPassword(req, res) {
         try {
