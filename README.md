@@ -1,3 +1,3 @@
 # NodeAuthBoilerplate
 
-Boilerplate Code of JWT Authentication using NodeJS
+Boilerplate Code for JWT Authentication using NodeJS
